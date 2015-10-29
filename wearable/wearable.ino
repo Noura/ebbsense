@@ -1,3 +1,6 @@
+
+
+/* https://github.com/jeroendoggen/Arduino-signal-filtering-library */
 #include <firFilter.h>
 
 #define sensorPin A0
