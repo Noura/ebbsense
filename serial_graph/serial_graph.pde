@@ -1,3 +1,7 @@
+/* from
+http://www.chris3000.com/archive/galvanic-skin-response/
+I slightly modified it but much thanks for this */
+
 import processing.serial.*;
 
 int reading = 0;
