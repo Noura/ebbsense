@@ -160,14 +160,23 @@ void serialEvent(Serial p) {
     char inByte = mySerial.readChar();
     if (inByte != ','){ 
       inString = inString + inByte;
-    } 
+    }
     else {
-      reading = int(inString);
-      //println(inString);
+      if (inString.equals("MARK")) {
+        showMark();
+      }
+      else {
+        reading = int(inString);
+      }
       inString = "";
     }
   }
   gathering = false;
+}
+
+void showMark() {
+  stroke(255, 0, 0, 255);
+  line(x,0,x,height);
 }
 
 void keyPressed() {
