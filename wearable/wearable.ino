@@ -1,25 +1,18 @@
 
 // SETTINGS ///////////////////
 #define sensorPin A0
-#define N 32
+#define N 100
 // sampleRate in Hz
 #define sampleRate 20
-// if the sensor value increases by this much in the array of previous values
-// we store, then it counts as a "peak"
-int peakThreshold = 50;
+// You should think about the sampleRate and N carefully.
+// For example if the sampleRate is 20 and N is 100, then we are storing the previous
+// 100 / 20 = 5 seconds worth of data. This is the time scale over which we will compute
+// the average and standard deviation, which are used for spike detection.
 ///////////////////////////////
 
-int sensorRaw;
-int sensorFilteredNew;
-int sensorFiltered[N];
-int sensorIncrease;
-
-int samplePeriod = 1000 / sampleRate;
-
-//Low pass bessel filter order=1 alpha1=0.02 
-/* designed at http://www.schwietering.com/jayduino/filtuino/
- * http://www.schwietering.com/jayduino/filtuino/index.php?characteristic=be&passmode=lp&order=1&usesr=usesr&sr=20&frequencyLow=0.4&noteLow=&noteHigh=&pw=pw&calctype=float&run=Send
- */
+// Low pass bessel filter order=1 alpha1=0.02 samplerate=20
+// designed at http://www.schwietering.com/jayduino/filtuino/
+// http://www.schwietering.com/jayduino/filtuino/index.php?characteristic=be&passmode=lp&order=1&usesr=usesr&sr=20&frequencyLow=0.4&noteLow=&noteHigh=&pw=pw&calctype=float&run=Send
 class filter
 {
   public:
@@ -41,6 +34,12 @@ class filter
 
 filter myFilter;
 
+int sensorRaw;
+int sensorFilteredNew;
+int sensorFiltered[N];
+
+int samplePeriod = 1000 / sampleRate;
+
 void setup() {
   Serial.begin(9600);
 }
@@ -49,14 +48,13 @@ void loop() {
   sensorRaw = analogRead(sensorPin);
   sensorFilteredNew = myFilter.step(sensorRaw);
   addToArray(sensorFilteredNew);
-  sensorIncrease = maxIncrease();
   
-  if (sensorIncrease >= peakThreshold) {
-    Serial.print("MARK");
-  } else {
-    Serial.print(sensorFilteredNew);
+  //Serial.print(s);Serial.print(" ");Serial.print(sensorIncrease);Serial.println();
+  
+  if (hasPeak()) {
+    Serial.print("MARK");Serial.print(",");
   }
-  Serial.print(",");
+  Serial.print(sensorFilteredNew);Serial.print(",");
   
   delay(samplePeriod);
 }
@@ -70,6 +68,31 @@ void addToArray(int x) {
   sensorFiltered[0] = x;
 }
 
+bool hasPeak() {
+  // calculate the average
+  float avg = 0;
+  for (int i = 0; i < N; i++) {
+    avg += sensorFiltered[i];
+  }
+  avg /= N;
+  //Serial.print("\n avg: ");Serial.print(avg);
+
+  // calculate the standard deviation
+  float std = 0;
+  for (int i = 0; i < N; i++) {
+    std += pow(sensorFiltered[i] - avg, 2);
+  }
+  std = sqrt(std / N);
+  //Serial.print(" std: ");Serial.println(std);
+  
+  if (sensorFiltered[0] - avg > std) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/*
 int maxIncrease() {
   int maxVal = sensorFiltered[0];
   int maxIncr = 0;
@@ -81,7 +104,9 @@ int maxIncrease() {
     maxVal = max(maxVal, sensorFiltered[i]);
   }
   return maxIncr;
-}
+}*/
+
+
 
 
 
