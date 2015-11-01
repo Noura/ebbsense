@@ -51,6 +51,9 @@ boolean logging = false;
 
 PFont font;
 
+boolean newData = false;
+boolean newMark = false;
+
 void setup(){
   // The font must be located in the sketch's 
   // "data" directory to load successfully
@@ -72,26 +75,37 @@ void setup(){
   beginning = millis();
 }
 
-
 void draw(){
-  calcWaveData();
-  fill (0,0,0,2);//make trails
-  noStroke();
-  if (fadeCounter%3 ==0){
-    rect(0,height-absHigh,width,height-absLow);
+  if (newData) {
+    drawPoint();
+    newData = false;
   }
-  fill(255,255,255,255);
-  stroke(255,255,255,255);
-  line(x-lineRange,height-lastRead, x, height-currentRead);
-  //draw the abs height lines
-  stroke(255,255,255,255);
-  line (0,height-absHigh, width, height-absHigh);
-  line (0,height-absLow, width, height-absLow);
-  x = x+lineRange;
-  if (x > width)   //if it goes offscreen, loop back to the left
-    x = 0;
-  lastRead = currentRead;
-  fadeCounter++;
+  if (newMark) {
+    showMark();
+    newMark = false;
+  }
+}
+
+void drawPoint() {
+    calcWaveData();
+    fill (0,0,0,2);//make trails
+    noStroke();
+    if (fadeCounter%3 ==0){
+      rect(0,height-absHigh,width,height-absLow);
+    }
+    fill(255,255,255,255);
+    stroke(255,255,255,255);
+    line(x-lineRange,height-lastRead, x, height-currentRead);
+    ellipse(x, height-currentRead, 2, 2);
+    //draw the abs height lines
+    stroke(255,255,255,255);
+    line (0,height-absHigh, width, height-absHigh);
+    line (0,height-absLow, width, height-absLow);
+    x = x+lineRange;
+    if (x > width)   //if it goes offscreen, loop back to the left
+      x = 0;
+    lastRead = currentRead;
+    fadeCounter++; 
 }
 
 void calcWaveData(){
@@ -163,10 +177,11 @@ void serialEvent(Serial p) {
     }
     else {
       if (inString.equals("MARK")) {
-        showMark();
+        newMark = true;
       }
       else {
         reading = int(inString);
+        newData = true;
       }
       inString = "";
     }
