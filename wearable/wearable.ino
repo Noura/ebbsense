@@ -85,6 +85,8 @@ bool hasPeak() {
   std = sqrt(std / N);
   //Serial.print(" std: ");Serial.println(std);
   
+  // if the current value is more than a standard deviation above the mean,
+  // then that counts as a peak
   if (sensorFiltered[0] - avg > std) {
     return true;
   } else {
