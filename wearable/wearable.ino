@@ -9,10 +9,11 @@
 // 100 / 20 = 5 seconds worth of data. This is the time scale over which we will compute
 // the average and standard deviation, which are used for spike detection.
 
+#define NPINS 1
 // where threads are plugged in
-int threadPin[6] = {3, 5, 6, 7, 8, 9};
+int threadPin[NPINS] = {3};
 // how much power you think each thread needs. depends on their length etc
-int threadPower[6] = {255, 255, 255, 255, 255, 255};
+int threadPower[NPINS] = {255};
 // how long (ms) a thread should stay on for before turning off
 #define threadStayOnFor 10000
 ///////////////////////////////
@@ -47,14 +48,15 @@ int sensorFiltered[N];
 
 int samplePeriod = 1000 / sampleRate;
 
-long threadTimeOn[6] = {0, 0, 0, 0, 0, 0};
-bool threadOn[6] = {false, false, false, false, false, false};
-int whichThread = 0;
+long threadTimeOn[NPINS];
+bool threadOn[NPINS];
 
 void setup() {
   Serial.begin(9600);
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < NPINS; i++) {
     pinMode(threadPin[i], OUTPUT);
+    threadTimeOn[i] = 0;
+    threadOn[i] = false;
   }
 }
 
@@ -65,10 +67,7 @@ void loop() {
   
   if (hasPeak()) {
     Serial.print("MARK");Serial.print(",");
-    threadOn[whichThread] = true;
-    threadTimeOn[whichThread] = millis();
-    whichThread += 1;
-    whichThread %= 6;
+    activateThread();
   }
   Serial.print(sensorFilteredNew);Serial.print(",");
   //Serial.print(sensorRaw);Serial.print(",");
@@ -78,7 +77,20 @@ void loop() {
   delay(samplePeriod);
 }
 
-int threadLastPowered = 0; // this should only be used by updateThreads()
+// which thread to activate this time. should only be used by activateThread()
+int whichThread = 0;
+void activateThread() {
+  threadOn[whichThread] = true;
+  threadTimeOn[whichThread] = millis();
+  
+  // choosing which thread to activate next
+  // this cycles through all the available threads
+  whichThread += 1;
+  whichThread %= NPINS;
+}
+
+// which thread last received power. should only be used by activateThreads()
+int threadLastPowered = 0;
 void updateThreads() {
   // only turn on one thread each time, then wait for the next time to come around to turn on
   // a different thread. should keep track of which thread was turned on last time and turn on
@@ -86,11 +98,10 @@ void updateThreads() {
   
   analogWrite(threadPin[threadLastPowered], 0);
   
-  int startThread = (threadLastPowered + 1) % 6;
-  for (int j = 0; j < 6; j++) {
-    int i = (startThread + j + 1) % 6;
+  int startThread = (threadLastPowered + 1) % NPINS;
+  for (int j = 0; j < NPINS; j++) {
+    int i = (startThread + j) % NPINS;
     if (threadOn[i]) {
-      Serial.print("\nthreadPin: ");Serial.print(threadPin[i]);Serial.println();
       analogWrite(threadPin[i], threadPower[i]);
       threadLastPowered = i;
       break;
@@ -99,7 +110,7 @@ void updateThreads() {
     }
   }
   
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < NPINS; i++) {
     if (threadOn[i] && millis() - threadTimeOn[i] > threadStayOnFor) {
       threadOn[i] = false;
     }
@@ -122,7 +133,6 @@ bool hasPeak() {
     avg += sensorFiltered[i];
   }
   avg /= N;
-  //Serial.print("\n avg: ");Serial.print(avg);
 
   // calculate the standard deviation
   float std = 0;
@@ -130,7 +140,6 @@ bool hasPeak() {
     std += pow(sensorFiltered[i] - avg, 2);
   }
   std = sqrt(std / N);
-  //Serial.print(" std: ");Serial.println(std);
   
   // if the current value is more than a standard deviation above the mean,
   // then that counts as a peak
