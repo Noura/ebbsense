@@ -13,9 +13,9 @@
 // where threads are plugged in
 int threadPin[NPINS] = {3};
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NPINS] = {255};
+int threadPower[NPINS] = {80};
 // how long (ms) a thread should stay on for before turning off
-#define threadStayOnFor 10000
+#define threadStayOnFor 12000
 ///////////////////////////////
 
 // Low pass bessel filter order=1 alpha1=0.02 samplerate=20
