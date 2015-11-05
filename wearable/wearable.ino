@@ -1,6 +1,7 @@
 
 // SETTINGS ///////////////////
 #define sensorPin A0
+#define debugPin 2
 #define N 100
 // sampleRate in Hz
 #define sampleRate 20
@@ -13,6 +14,9 @@
 #define NTHREADS 1
 // where threads are plugged in
 int threadPin[NTHREADS] = {3};
+// for each thread, have an LED to show when the thread is activated
+// (the LED only lights up when in debug mode)
+int ledPin[NTHREADS] = {13};
 // how much power you think each thread needs. depends on their length etc
 int threadPower[NTHREADS] = {80};
 // how long (ms) a thread should stay on for before turning off
@@ -52,16 +56,23 @@ int samplePeriod = 1000 / sampleRate;
 long threadTimeOn[NTHREADS];
 bool threadOn[NTHREADS];
 
+// whether we are in debug mode or not
+bool debug = false;
+
 void setup() {
   Serial.begin(9600);
+  pinMode(debugPin, INPUT);
   for (int i = 0; i < NTHREADS; i++) {
     pinMode(threadPin[i], OUTPUT);
     threadTimeOn[i] = 0;
     threadOn[i] = false;
+    pinMode(ledPin[i], OUTPUT);
   }
 }
 
 void loop() {
+  debug = (digitalRead(debugPin) == HIGH);
+  
   sensorRaw = analogRead(sensorPin);
   sensorFilteredNew = myFilter.step(sensorRaw);
   addToArray(sensorFilteredNew);
@@ -83,6 +94,7 @@ int whichThread = 0;
 void activateThread() {
   threadOn[whichThread] = true;
   threadTimeOn[whichThread] = millis();
+  if (debug) digitalWrite(ledPin[whichThread], HIGH);
   
   // choosing which thread to activate next
   // this cycles through all the available threads
@@ -114,6 +126,13 @@ void updateThreads() {
   for (int i = 0; i < NTHREADS; i++) {
     if (threadOn[i] && millis() - threadTimeOn[i] > threadStayOnFor) {
       threadOn[i] = false;
+      digitalWrite(ledPin[i], LOW);
+    }
+  }
+  
+  if (!debug) {
+    for (int i = 0; i < NTHREADS; i++) {
+      digitalWrite(ledPin[i], LOW);
     }
   }
 }
