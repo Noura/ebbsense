@@ -9,11 +9,12 @@
 // 100 / 20 = 5 seconds worth of data. This is the time scale over which we will compute
 // the average and standard deviation, which are used for spike detection.
 
-#define NPINS 1
+// the number of threads on the wearable
+#define NTHREADS 1
 // where threads are plugged in
-int threadPin[NPINS] = {3};
+int threadPin[NTHREADS] = {3};
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NPINS] = {80};
+int threadPower[NTHREADS] = {80};
 // how long (ms) a thread should stay on for before turning off
 #define threadStayOnFor 12000
 ///////////////////////////////
@@ -48,12 +49,12 @@ int sensorFiltered[N];
 
 int samplePeriod = 1000 / sampleRate;
 
-long threadTimeOn[NPINS];
-bool threadOn[NPINS];
+long threadTimeOn[NTHREADS];
+bool threadOn[NTHREADS];
 
 void setup() {
   Serial.begin(9600);
-  for (int i = 0; i < NPINS; i++) {
+  for (int i = 0; i < NTHREADS; i++) {
     pinMode(threadPin[i], OUTPUT);
     threadTimeOn[i] = 0;
     threadOn[i] = false;
@@ -86,7 +87,7 @@ void activateThread() {
   // choosing which thread to activate next
   // this cycles through all the available threads
   whichThread += 1;
-  whichThread %= NPINS;
+  whichThread %= NTHREADS;
 }
 
 // which thread last received power. should only be used by activateThreads()
@@ -98,9 +99,9 @@ void updateThreads() {
   
   analogWrite(threadPin[threadLastPowered], 0);
   
-  int startThread = (threadLastPowered + 1) % NPINS;
-  for (int j = 0; j < NPINS; j++) {
-    int i = (startThread + j) % NPINS;
+  int startThread = (threadLastPowered + 1) % NTHREADS;
+  for (int j = 0; j < NTHREADS; j++) {
+    int i = (startThread + j) % NTHREADS;
     if (threadOn[i]) {
       analogWrite(threadPin[i], threadPower[i]);
       threadLastPowered = i;
@@ -110,7 +111,7 @@ void updateThreads() {
     }
   }
   
-  for (int i = 0; i < NPINS; i++) {
+  for (int i = 0; i < NTHREADS; i++) {
     if (threadOn[i] && millis() - threadTimeOn[i] > threadStayOnFor) {
       threadOn[i] = false;
     }
