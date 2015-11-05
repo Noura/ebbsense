@@ -1,9 +1,12 @@
 
 // SETTINGS ///////////////////
+// the pin the GSR sensor is plugged into
 #define sensorPin A0
+// the pin the debug switch is plugged into
 #define debugPin 2
+// the number of previous filtered GSR readings to store
 #define N 100
-// sampleRate in Hz
+// sample rate of taking GSR readings in Hz
 #define sampleRate 20
 // You should think about the sampleRate and N carefully.
 // For example if the sampleRate is 20 and N is 100, then we are storing the previous
@@ -22,6 +25,13 @@ int threadPower[NTHREADS] = {80};
 // how long (ms) a thread should stay on for before turning off
 #define threadStayOnFor 12000
 ///////////////////////////////
+
+// NOTE
+// throughout, "activated" or "on" for threads is used interchangeably
+// and "deactivated" or "off" for threads is used interchangeably
+// but "supplying power" to a thread is different, because all the
+// threads that are "on" take turns getting supplied power in order
+// to accommodate the amount of current the battery can supply.
 
 // Low pass bessel filter order=1 alpha1=0.02 samplerate=20
 // designed at http://www.schwietering.com/jayduino/filtuino/
@@ -53,10 +63,14 @@ int sensorFiltered[N];
 
 int samplePeriod = 1000 / sampleRate;
 
+// the time at which a thread was activated.
+// threads get deactivated after threadStayOnFor milliseconds
 long threadTimeOn[NTHREADS];
+// whether each thread is currently activated or not
 bool threadOn[NTHREADS];
 
-// whether we are in debug mode or not
+// whether we are in debug mode or not. in debug mode,
+// LEDs come on corresponding with which threads are on
 bool debug = false;
 
 void setup() {
@@ -78,20 +92,28 @@ void loop() {
   addToArray(sensorFilteredNew);
   
   if (hasPeak()) {
+    // sending data to Processing sketch which graphs it
     Serial.print("MARK");Serial.print(",");
+    // turn on a thread to show this peak
     activateThread();
   }
+  // sending data to Processing sketch which graphs it
   Serial.print(sensorFilteredNew);Serial.print(",");
-  //Serial.print(sensorRaw);Serial.print(",");
   
+  // keeps track of giving power to the threads that are
+  // currently on, as well as turning threads off after
+  // stayOnFor milliseconds since the thread came on
   updateThreads();
 
+  // wait this much time so that we regularly sample
+  // the GSR sensor
   delay(samplePeriod);
 }
 
 // which thread to activate this time. should only be used by activateThread()
 int whichThread = 0;
 void activateThread() {
+  // you have to do these three things to turn a thread "on"
   threadOn[whichThread] = true;
   threadTimeOn[whichThread] = millis();
   if (debug) digitalWrite(ledPin[whichThread], HIGH);
@@ -105,12 +127,21 @@ void activateThread() {
 // which thread last received power. should only be used by activateThreads()
 int threadLastPowered = 0;
 void updateThreads() {
-  // only turn on one thread each time, then wait for the next time to come around to turn on
-  // a different thread. should keep track of which thread was turned on last time and turn on
-  // a different thread this time
+  // 1. makes all the activated threads take turns getting power from
+  //    the battery. each time updateThreads() is called, it chooses
+  //    a different activated thread to receive power.
+  // 2. turns off threads after stayOnFor ms since thread came on.
+  // 3. makes sure to turn off debug LEDs
   
+  // the last thread to get power already got some power, so its turn
+  // is over. stop giving it power.
   analogWrite(threadPin[threadLastPowered], 0);
   
+  // choose the next thread to give power to. start by looking at the
+  // the next thread right after threadLastPowered, and then keep
+  // checking each thread one by one until we find one that is on.
+  // once we find one that is on, we can give that thread power and
+  // stop looking/break out of the for loop
   int startThread = (threadLastPowered + 1) % NTHREADS;
   for (int j = 0; j < NTHREADS; j++) {
     int i = (startThread + j) % NTHREADS;
@@ -119,10 +150,15 @@ void updateThreads() {
       threadLastPowered = i;
       break;
     } else {
+      // also just make sure any "off" pins are not getting power.
+      // not sure if this is necessary here?
       analogWrite(threadPin[i], 0);
     }
   }
   
+  // go through all the threads and see which have been on for long
+  // enough that it is time to turn them off. also turn off the
+  // corresponding LED for that thread.
   for (int i = 0; i < NTHREADS; i++) {
     if (threadOn[i] && millis() - threadTimeOn[i] > threadStayOnFor) {
       threadOn[i] = false;
@@ -130,6 +166,7 @@ void updateThreads() {
     }
   }
   
+  // if we are not in debug mode, then all LEDs should be off.
   if (!debug) {
     for (int i = 0; i < NTHREADS; i++) {
       digitalWrite(ledPin[i], LOW);
@@ -162,7 +199,9 @@ bool hasPeak() {
   std = sqrt(std / N);
   
   // if the current value is more than a standard deviation above the mean,
-  // then that counts as a peak
+  // then that counts as a peak. also make sure that the current value is
+  // more than 25 above the mean, in case there is just some noise in a
+  // pretty flat signal
   if (sensorFiltered[0] - avg > std &&
       sensorFiltered[0] - avg > 25 ) {
     return true;
@@ -170,20 +209,6 @@ bool hasPeak() {
     return false;
   }
 }
-
-/*
-int maxIncrease() {
-  int maxVal = sensorFiltered[0];
-  int maxIncr = 0;
-  for (int i = 0; i < N; i++) {
-    int curIncr = maxVal - sensorFiltered[i];
-    if (curIncr > maxIncr) {
-      maxIncr = curIncr;
-    }
-    maxVal = max(maxVal, sensorFiltered[i]);
-  }
-  return maxIncr;
-}*/
 
 
 
