@@ -85,9 +85,12 @@ void setup() {
 }
 
 void loop() {
-  debug = (digitalRead(debugPin) == HIGH);
+  //debug = (digitalRead(debugPin) == HIGH);
+  debug = true;
   
   sensorRaw = analogRead(sensorPin);
+  sensorRaw = min(sensorRaw, 1023);
+  sensorRaw = max(sensorRaw, 0);
   sensorFilteredNew = myFilter.step(sensorRaw);
   addToArray(sensorFilteredNew);
   
@@ -116,7 +119,10 @@ void activateThread() {
   // you have to do these three things to turn a thread "on"
   threadOn[whichThread] = true;
   threadTimeOn[whichThread] = millis();
-  if (debug) digitalWrite(ledPin[whichThread], HIGH);
+  if (debug) {
+    //Serial.println();Serial.println("turning on LED");
+    digitalWrite(ledPin[whichThread], HIGH);
+  }
   
   // choosing which thread to activate next
   // this cycles through all the available threads
@@ -146,6 +152,8 @@ void updateThreads() {
   for (int j = 0; j < NTHREADS; j++) {
     int i = (startThread + j) % NTHREADS;
     if (threadOn[i]) {
+      //Serial.println();
+      //Serial.print("powering thread at index: ");Serial.println(i);
       analogWrite(threadPin[i], threadPower[i]);
       threadLastPowered = i;
       break;
@@ -167,11 +175,13 @@ void updateThreads() {
   }
   
   // if we are not in debug mode, then all LEDs should be off.
+  /*
   if (!debug) {
     for (int i = 0; i < NTHREADS; i++) {
       digitalWrite(ledPin[i], LOW);
     }
   }
+  */
 }
 
 void addToArray(int x) {
@@ -203,7 +213,7 @@ bool hasPeak() {
   // more than 25 above the mean, in case there is just some noise in a
   // pretty flat signal
   if (sensorFiltered[0] - avg > std &&
-      sensorFiltered[0] - avg > 25 ) {
+      sensorFiltered[0] - avg > 50 ) {
     return true;
   } else {
     return false;
