@@ -16,12 +16,12 @@
 // the number of threads on the wearable
 #define NTHREADS 1
 // where threads are plugged in
-int threadPin[NTHREADS] = {3};
+int threadPin[NTHREADS] = {5};
 // for each thread, have an LED to show when the thread is activated
 // (the LED only lights up when in debug mode)
 int ledPin[NTHREADS] = {13};
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NTHREADS] = {80};
+int threadPower[NTHREADS] = {120};
 // how long (ms) a thread should stay on for before turning off
 #define threadStayOnFor 12000
 ///////////////////////////////
