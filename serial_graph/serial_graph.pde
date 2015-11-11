@@ -63,7 +63,7 @@ void setup(){
   for (int i = 0; i < readingBuffer.length; i++){
     readingBuffer[i] = 0; 
   }
-  println(Serial.list());
+  println();println("SERIAL PORTS:"); println(Serial.list());
   
   size(800, 800);
   noStroke();
