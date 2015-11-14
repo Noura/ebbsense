@@ -1,9 +1,7 @@
 
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
-#define sensorPin A7
-// the pin the debug switch is plugged into
-#define debugPin 13
+#define sensorPin A0
 // the number of previous filtered GSR readings to store
 #define N 100
 // sample rate of taking GSR readings in Hz
@@ -16,12 +14,9 @@
 // the number of threads on the wearable
 #define NTHREADS 1
 // where threads are plugged in
-int threadPin[NTHREADS] = {5};
-// for each thread, have an LED to show when the thread is activated
-// (the LED only lights up when in debug mode)
-int ledPin[NTHREADS] = {13};
+int threadPin[NTHREADS] = {3};
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NTHREADS] = {120};
+int threadPower[NTHREADS] = {140};
 // how long (ms) a thread should stay on for before turning off
 #define threadStayOnFor 12000
 ///////////////////////////////
@@ -69,25 +64,16 @@ long threadTimeOn[NTHREADS];
 // whether each thread is currently activated or not
 bool threadOn[NTHREADS];
 
-// whether we are in debug mode or not. in debug mode,
-// LEDs come on corresponding with which threads are on
-bool debug = false;
-
 void setup() {
   Serial.begin(9600);
-  pinMode(debugPin, INPUT);
   for (int i = 0; i < NTHREADS; i++) {
     pinMode(threadPin[i], OUTPUT);
     threadTimeOn[i] = 0;
     threadOn[i] = false;
-//    pinMode(ledPin[i], OUTPUT);
   }
 }
 
 void loop() {
-  //debug = (digitalRead(debugPin) == HIGH);
-  debug = true;
-  
   sensorRaw = analogRead(sensorPin);
   sensorRaw = min(sensorRaw, 1023);
   sensorRaw = max(sensorRaw, 0);
@@ -119,10 +105,6 @@ void activateThread() {
   // you have to do these three things to turn a thread "on"
   threadOn[whichThread] = true;
   threadTimeOn[whichThread] = millis();
-  if (debug) {
-    //Serial.println();Serial.println("turning on LED");
-    digitalWrite(ledPin[whichThread], HIGH);
-  }
   
   // choosing which thread to activate next
   // this cycles through all the available threads
@@ -137,10 +119,10 @@ void updateThreads() {
   //    the battery. each time updateThreads() is called, it chooses
   //    a different activated thread to receive power.
   // 2. turns off threads after stayOnFor ms since thread came on.
-  // 3. makes sure to turn off debug LEDs
   
   // the last thread to get power already got some power, so its turn
   // is over. stop giving it power.
+  Serial.println();Serial.print(threadPin[threadLastPowered]);Serial.println(" off");
   analogWrite(threadPin[threadLastPowered], 0);
   
   // choose the next thread to give power to. start by looking at the
@@ -153,7 +135,7 @@ void updateThreads() {
     int i = (startThread + j) % NTHREADS;
     if (threadOn[i]) {
       //Serial.println();
-      //Serial.print("powering thread at index: ");Serial.println(i);
+      Serial.print("\npowering thread at pin: ");Serial.println(threadPin[i]);
       analogWrite(threadPin[i], threadPower[i]);
       threadLastPowered = i;
       break;
@@ -170,16 +152,8 @@ void updateThreads() {
   for (int i = 0; i < NTHREADS; i++) {
     if (threadOn[i] && millis() - threadTimeOn[i] > threadStayOnFor) {
       threadOn[i] = false;
-      digitalWrite(ledPin[i], LOW);
     }
   }
-  
-  // if we are not in debug mode, then all LEDs should be off.
-//  if (!debug) {
-//    for (int i = 0; i < NTHREADS; i++) {
-//      digitalWrite(ledPin[i], LOW);
-//    }
-//  }
 }
 
 void addToArray(int x) {
