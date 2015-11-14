@@ -1,9 +1,9 @@
 
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
-#define sensorPin A0
+#define sensorPin A7
 // the pin the debug switch is plugged into
-#define debugPin 2
+#define debugPin 13
 // the number of previous filtered GSR readings to store
 #define N 100
 // sample rate of taking GSR readings in Hz
@@ -80,7 +80,7 @@ void setup() {
     pinMode(threadPin[i], OUTPUT);
     threadTimeOn[i] = 0;
     threadOn[i] = false;
-    pinMode(ledPin[i], OUTPUT);
+//    pinMode(ledPin[i], OUTPUT);
   }
 }
 
@@ -116,7 +116,7 @@ void activateThread() {
   // you have to do these three things to turn a thread "on"
   threadOn[whichThread] = true;
   threadTimeOn[whichThread] = millis();
-  if (debug) digitalWrite(ledPin[whichThread], HIGH);
+//  if (debug) digitalWrite(ledPin[whichThread], HIGH);
   
   // choosing which thread to activate next
   // this cycles through all the available threads
@@ -167,11 +167,11 @@ void updateThreads() {
   }
   
   // if we are not in debug mode, then all LEDs should be off.
-  if (!debug) {
-    for (int i = 0; i < NTHREADS; i++) {
-      digitalWrite(ledPin[i], LOW);
-    }
-  }
+//  if (!debug) {
+//    for (int i = 0; i < NTHREADS; i++) {
+//      digitalWrite(ledPin[i], LOW);
+//    }
+//  }
 }
 
 void addToArray(int x) {
