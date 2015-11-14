@@ -3059,7 +3059,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="POWER" library="microbuilder" deviceset="JST_2PIN" device=""/>
 <part name="R7" library="SparkFun-Resistors" deviceset="0OHM-1/10W-5%(0603)" device="" value="330"/>
 <part name="R8" library="SparkFun-Resistors" deviceset="0OHM-1/10W-5%(0603)" device="" value="330"/>
-<part name="JP1" library="SparkFun-Connectors" deviceset="M04" device="SMD_RA_FEMALE"/>
+<part name="GSR" library="SparkFun-Connectors" deviceset="M04" device="SMD_RA_FEMALE"/>
 </parts>
 <sheets>
 <sheet>
@@ -3085,9 +3085,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="-7.62" y1="165.1" x2="33.02" y2="165.1" width="0.1524" layer="94"/>
 <wire x1="33.02" y1="165.1" x2="33.02" y2="134.62" width="0.1524" layer="94"/>
 <wire x1="40.64" y1="165.1" x2="40.64" y2="134.62" width="0.1524" layer="94"/>
-<wire x1="40.64" y1="134.62" x2="111.76" y2="134.62" width="0.1524" layer="94"/>
-<wire x1="111.76" y1="134.62" x2="111.76" y2="165.1" width="0.1524" layer="94"/>
-<wire x1="111.76" y1="165.1" x2="40.64" y2="165.1" width="0.1524" layer="94"/>
+<wire x1="40.64" y1="134.62" x2="109.22" y2="134.62" width="0.1524" layer="94"/>
+<wire x1="109.22" y1="134.62" x2="109.22" y2="165.1" width="0.1524" layer="94"/>
+<wire x1="109.22" y1="165.1" x2="40.64" y2="165.1" width="0.1524" layer="94"/>
 <text x="55.88" y="160.02" size="2.54" layer="94">GSR</text>
 </plain>
 <instances>
@@ -3129,7 +3129,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="POWER" gate="G$1" x="27.686" y="142.24"/>
 <instance part="R7" gate="G$1" x="78.74" y="144.78" rot="R270"/>
 <instance part="R8" gate="G$1" x="68.58" y="139.7"/>
-<instance part="JP1" gate="G$1" x="104.14" y="147.32" rot="R180"/>
+<instance part="GSR" gate="G$1" x="101.6" y="147.32" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -3196,9 +3196,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="50.8" y1="139.7" x2="63.5" y2="139.7" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="JP1" gate="G$1" pin="2"/>
-<wire x1="99.06" y1="147.32" x2="86.36" y2="147.32" width="0.1524" layer="91"/>
-<label x="86.36" y="147.32" size="1.778" layer="95"/>
+<pinref part="GSR" gate="G$1" pin="2"/>
+<wire x1="96.52" y1="147.32" x2="83.82" y2="147.32" width="0.1524" layer="91"/>
+<label x="83.82" y="147.32" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="FET1" class="0">
@@ -3555,19 +3555,19 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="R8" gate="G$1" pin="2"/>
 <pinref part="R7" gate="G$1" pin="2"/>
 <wire x1="73.66" y1="139.7" x2="78.74" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="78.74" y1="139.7" x2="83.82" y2="139.7" width="0.1524" layer="91"/>
-<wire x1="83.82" y1="139.7" x2="83.82" y2="144.78" width="0.1524" layer="91"/>
+<wire x1="78.74" y1="139.7" x2="81.28" y2="139.7" width="0.1524" layer="91"/>
+<wire x1="81.28" y1="139.7" x2="81.28" y2="144.78" width="0.1524" layer="91"/>
 <junction x="78.74" y="139.7"/>
-<pinref part="JP1" gate="G$1" pin="3"/>
-<wire x1="83.82" y1="144.78" x2="99.06" y2="144.78" width="0.1524" layer="91"/>
-<label x="86.36" y="144.78" size="1.778" layer="95"/>
+<pinref part="GSR" gate="G$1" pin="3"/>
+<wire x1="81.28" y1="144.78" x2="96.52" y2="144.78" width="0.1524" layer="91"/>
+<label x="83.82" y="144.78" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="GSR_VCC" class="0">
 <segment>
-<pinref part="JP1" gate="G$1" pin="1"/>
-<wire x1="99.06" y1="149.86" x2="78.74" y2="149.86" width="0.1524" layer="91"/>
-<label x="86.36" y="149.86" size="1.778" layer="95"/>
+<pinref part="GSR" gate="G$1" pin="1"/>
+<wire x1="96.52" y1="149.86" x2="78.74" y2="149.86" width="0.1524" layer="91"/>
+<label x="83.82" y="149.86" size="1.778" layer="95"/>
 <pinref part="R7" gate="G$1" pin="1"/>
 <pinref part="U2" gate="G$1" pin="OUT"/>
 <wire x1="78.74" y1="149.86" x2="71.12" y2="149.86" width="0.1524" layer="91"/>
@@ -3576,9 +3576,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </net>
 <net name="GSR_SIG" class="0">
 <segment>
-<pinref part="JP1" gate="G$1" pin="4"/>
-<wire x1="99.06" y1="142.24" x2="86.36" y2="142.24" width="0.1524" layer="91"/>
-<label x="86.36" y="142.24" size="1.778" layer="95"/>
+<pinref part="GSR" gate="G$1" pin="4"/>
+<wire x1="96.52" y1="142.24" x2="83.82" y2="142.24" width="0.1524" layer="91"/>
+<label x="83.82" y="142.24" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
