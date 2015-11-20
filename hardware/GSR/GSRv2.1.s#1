@@ -3561,12 +3561,15 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <pinref part="GND1" gate="1" pin="GND"/>
 <wire x1="-0.254" y1="142.24" x2="3.556" y2="142.24" width="0.1524" layer="91"/>
-<pinref part="C3" gate="G$1" pin="-"/>
 <wire x1="3.556" y1="142.24" x2="9.652" y2="142.24" width="0.1524" layer="91"/>
-<wire x1="9.652" y1="144.78" x2="9.652" y2="142.24" width="0.1524" layer="91"/>
 <pinref part="C1" gate="G$1" pin="-"/>
 <wire x1="3.556" y1="144.78" x2="3.556" y2="142.24" width="0.1524" layer="91"/>
 <junction x="3.556" y="142.24"/>
+<pinref part="C3" gate="G$1" pin="-"/>
+<wire x1="9.652" y1="142.24" x2="9.652" y2="144.78" width="0.1524" layer="91"/>
+<pinref part="POWER" gate="G$1" pin="2"/>
+<wire x1="9.652" y1="142.24" x2="25.146" y2="142.24" width="0.1524" layer="91"/>
+<junction x="9.652" y="142.24"/>
 </segment>
 <segment>
 <pinref part="U2" gate="G$1" pin="GND"/>
@@ -3927,12 +3930,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pinref part="POWER" gate="G$1" pin="1"/>
 <wire x1="12.192" y1="144.78" x2="12.192" y2="153.162" width="0.1524" layer="91"/>
 <wire x1="25.146" y1="144.78" x2="12.192" y2="144.78" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="POWER" gate="G$1" pin="2"/>
-<wire x1="9.652" y1="142.24" x2="25.146" y2="142.24" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="GSR_VSS" class="0">

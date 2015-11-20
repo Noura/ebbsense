@@ -3051,7 +3051,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="LED4" library="microbuilder" deviceset="LED" device="0603_NOOUTLINE"/>
 <part name="LED5" library="microbuilder" deviceset="LED" device="0603_NOOUTLINE"/>
 <part name="LED6" library="microbuilder" deviceset="LED" device="0603_NOOUTLINE"/>
-<part name="DEBUG_SWITCH" library="microbuilder" deviceset="SWITCH_SPST" device=""/>
 <part name="C1" library="microbuilder" deviceset="CAP_TANTALUM" device="B/3528_WAVE"/>
 <part name="C3" library="microbuilder" deviceset="CAP_TANTALUM" device="B/3528_WAVE"/>
 <part name="POWER_SWITCH" library="myParts" deviceset="PUSH_BUTTON" device=""/>
@@ -3059,7 +3058,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="POWER" library="microbuilder" deviceset="JST_2PIN" device=""/>
 <part name="R7" library="SparkFun-Resistors" deviceset="0OHM-1/10W-5%(0603)" device="" value="330"/>
 <part name="R8" library="SparkFun-Resistors" deviceset="0OHM-1/10W-5%(0603)" device="" value="330"/>
-<part name="GSR" library="SparkFun-Connectors" deviceset="M04" device="SMD_RA_FEMALE"/>
+<part name="GSR" library="SparkFun-Connectors" deviceset="M04" device="PTH"/>
+<part name="DEBUG_SWITCH" library="microbuilder" deviceset="SWITCH_SPST" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3121,7 +3121,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="LED4" gate="G$1" x="78.74" y="22.86" rot="R270"/>
 <instance part="LED5" gate="G$1" x="83.82" y="22.86" rot="R270"/>
 <instance part="LED6" gate="G$1" x="88.9" y="22.86" rot="R270"/>
-<instance part="DEBUG_SWITCH" gate="G$1" x="71.12" y="40.64" rot="R180"/>
 <instance part="C1" gate="G$1" x="3.556" y="147.32"/>
 <instance part="C3" gate="G$1" x="9.652" y="147.32"/>
 <instance part="POWER_SWITCH" gate="G$1" x="29.972" y="160.782"/>
@@ -3130,6 +3129,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <instance part="R7" gate="G$1" x="78.74" y="144.78" rot="R270"/>
 <instance part="R8" gate="G$1" x="68.58" y="139.7"/>
 <instance part="GSR" gate="G$1" x="101.6" y="147.32" rot="R180"/>
+<instance part="DEBUG_SWITCH" gate="G$1" x="73.66" y="40.64"/>
 </instances>
 <busses>
 </busses>
@@ -3169,7 +3169,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="GND@4"/>
-<wire x1="60.96" y1="78.74" x2="60.96" y2="68.58" width="0.1524" layer="91"/>
+<wire x1="60.96" y1="78.74" x2="60.96" y2="66.04" width="0.1524" layer="91"/>
+<label x="60.96" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="GND@2"/>
@@ -3196,9 +3197,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="50.8" y1="139.7" x2="63.5" y2="139.7" width="0.1524" layer="91"/>
 </segment>
 <segment>
-<pinref part="GSR" gate="G$1" pin="2"/>
 <wire x1="96.52" y1="147.32" x2="83.82" y2="147.32" width="0.1524" layer="91"/>
 <label x="83.82" y="147.32" size="1.778" layer="95"/>
+<pinref part="GSR" gate="G$1" pin="2"/>
 </segment>
 </net>
 <net name="FET1" class="0">
@@ -3410,12 +3411,12 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <wire x1="76.2" y1="40.64" x2="91.44" y2="40.64" width="0.1524" layer="91"/>
 <label x="76.2" y="40.64" size="1.778" layer="95"/>
-<pinref part="DEBUG_SWITCH" gate="G$1" pin="P"/>
+<pinref part="DEBUG_SWITCH" gate="G$1" pin="S"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="D10"/>
-<wire x1="71.12" y1="86.36" x2="86.36" y2="86.36" width="0.1524" layer="91"/>
-<label x="78.74" y="86.36" size="1.778" layer="95"/>
+<pinref part="U1" gate="G$1" pin="D13"/>
+<wire x1="71.12" y1="93.98" x2="83.82" y2="93.98" width="0.1524" layer="91"/>
+<label x="78.74" y="93.98" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="N$1" class="0">
@@ -3478,7 +3479,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <segment>
 <wire x1="68.58" y1="40.64" x2="60.96" y2="40.64" width="0.1524" layer="91"/>
 <label x="60.96" y="40.64" size="1.778" layer="95"/>
-<pinref part="DEBUG_SWITCH" gate="G$1" pin="S"/>
+<pinref part="DEBUG_SWITCH" gate="G$1" pin="P"/>
 </segment>
 <segment>
 <wire x1="116.84" y1="7.62" x2="116.84" y2="22.86" width="0.1524" layer="91"/>
@@ -3496,8 +3497,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="5V@3"/>
-<wire x1="58.42" y1="78.74" x2="58.42" y2="68.58" width="0.1524" layer="91"/>
-<label x="58.42" y="68.58" size="1.778" layer="95" rot="R90"/>
+<wire x1="58.42" y1="78.74" x2="58.42" y2="66.04" width="0.1524" layer="91"/>
+<label x="58.42" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 <segment>
 <pinref part="U1" gate="G$1" pin="5V@1"/>
@@ -3537,13 +3538,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="25.146" y1="144.78" x2="12.192" y2="144.78" width="0.1524" layer="91"/>
 </segment>
 </net>
-<net name="GSR_IN" class="0">
-<segment>
-<pinref part="U1" gate="G$1" pin="A0"/>
-<wire x1="71.12" y1="96.52" x2="83.82" y2="96.52" width="0.1524" layer="91"/>
-<label x="78.74" y="96.52" size="1.778" layer="95"/>
-</segment>
-</net>
 <net name="N$7" class="0">
 <segment>
 <pinref part="POWER" gate="G$1" pin="2"/>
@@ -3558,27 +3552,32 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <wire x1="78.74" y1="139.7" x2="81.28" y2="139.7" width="0.1524" layer="91"/>
 <wire x1="81.28" y1="139.7" x2="81.28" y2="144.78" width="0.1524" layer="91"/>
 <junction x="78.74" y="139.7"/>
-<pinref part="GSR" gate="G$1" pin="3"/>
 <wire x1="81.28" y1="144.78" x2="96.52" y2="144.78" width="0.1524" layer="91"/>
 <label x="83.82" y="144.78" size="1.778" layer="95"/>
+<pinref part="GSR" gate="G$1" pin="3"/>
 </segment>
 </net>
 <net name="GSR_VCC" class="0">
 <segment>
-<pinref part="GSR" gate="G$1" pin="1"/>
 <wire x1="96.52" y1="149.86" x2="78.74" y2="149.86" width="0.1524" layer="91"/>
 <label x="83.82" y="149.86" size="1.778" layer="95"/>
 <pinref part="R7" gate="G$1" pin="1"/>
 <pinref part="U2" gate="G$1" pin="OUT"/>
 <wire x1="78.74" y1="149.86" x2="71.12" y2="149.86" width="0.1524" layer="91"/>
 <junction x="78.74" y="149.86"/>
+<pinref part="GSR" gate="G$1" pin="1"/>
 </segment>
 </net>
 <net name="GSR_SIG" class="0">
 <segment>
-<pinref part="GSR" gate="G$1" pin="4"/>
 <wire x1="96.52" y1="142.24" x2="83.82" y2="142.24" width="0.1524" layer="91"/>
 <label x="83.82" y="142.24" size="1.778" layer="95"/>
+<pinref part="GSR" gate="G$1" pin="4"/>
+</segment>
+<segment>
+<pinref part="U1" gate="G$1" pin="A7"/>
+<wire x1="53.34" y1="78.74" x2="53.34" y2="66.04" width="0.1524" layer="91"/>
+<label x="53.34" y="66.04" size="1.778" layer="95" rot="R90"/>
 </segment>
 </net>
 </nets>
