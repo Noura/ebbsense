@@ -14,9 +14,9 @@
 // the number of threads on the wearable
 #define NTHREADS 1
 // where threads are plugged in
-int threadPin[NTHREADS] = {3};
+int threadPin[NTHREADS] = {9};
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NTHREADS] = {140};
+int threadPower[NTHREADS] = {80};
 // how long (ms) a thread should stay on for before turning off
 #define threadStayOnFor 12000
 ///////////////////////////////
@@ -122,7 +122,7 @@ void updateThreads() {
   
   // the last thread to get power already got some power, so its turn
   // is over. stop giving it power.
-  Serial.println();Serial.print(threadPin[threadLastPowered]);Serial.println(" off");
+  //Serial.println();Serial.print(threadPin[threadLastPowered]);Serial.println(" off");
   analogWrite(threadPin[threadLastPowered], 0);
   
   // choose the next thread to give power to. start by looking at the
@@ -135,7 +135,7 @@ void updateThreads() {
     int i = (startThread + j) % NTHREADS;
     if (threadOn[i]) {
       //Serial.println();
-      Serial.print("\npowering thread at pin: ");Serial.println(threadPin[i]);
+      //Serial.print("\npowering thread at pin: ");Serial.println(threadPin[i]);
       analogWrite(threadPin[i], threadPower[i]);
       threadLastPowered = i;
       break;
