@@ -1,7 +1,7 @@
 
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
-#define sensorPin A7
+#define sensorPin A0
 // the pin the debug switch is plugged into
 #define debugPin 13
 // the number of previous filtered GSR readings to store
@@ -21,9 +21,9 @@ int threadPin[NTHREADS] = {5};
 // (the LED only lights up when in debug mode)
 int ledPin[NTHREADS] = {13};
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NTHREADS] = {120};
+int threadPower[NTHREADS] = {255};
 // how long (ms) a thread should stay on for before turning off
-#define threadStayOnFor 12000
+#define threadStayOnFor 60000
 ///////////////////////////////
 
 // NOTE
@@ -210,8 +210,9 @@ bool hasPeak() {
   // then that counts as a peak. also make sure that the current value is
   // more than 25 above the mean, in case there is just some noise in a
   // pretty flat signal
-  if (sensorFiltered[0] - avg > std &&
-      sensorFiltered[0] - avg > 50 ) {
+  if (sensorFiltered[0] - avg > std
+       &&
+       sensorFiltered[0] - avg > 25 ) {
     return true;
   } else {
     return false;
