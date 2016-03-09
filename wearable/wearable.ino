@@ -23,7 +23,7 @@ int ledPin[NTHREADS] = {13};
 // how much power you think each thread needs. depends on their length etc
 int threadPower[NTHREADS] = {255};
 // how long (ms) a thread should stay on for before turning off
-#define threadStayOnFor 60000
+#define threadStayOnFor 180000
 ///////////////////////////////
 
 // NOTE
