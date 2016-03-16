@@ -1,7 +1,7 @@
 
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
-#define sensorPin A5
+#define sensorPin A7
 // the number of previous filtered GSR readings to store
 #define N 100
 // sample rate of taking GSR readings in Hz
@@ -14,11 +14,11 @@
 // the number of threads on the wearable
 #define NTHREADS 1
 // where threads are plugged in
-int threadPin[NTHREADS] = {5};
+int threadPin = 9;
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NTHREADS] = {255};
+int threadPower = 255;
 // how long (ms) a thread should stay on for before turning off
-#define threadStayOnFor 60000
+#define threadStayOnFor 20000
 ///////////////////////////////
 
 // NOTE
@@ -60,17 +60,15 @@ int samplePeriod = 1000 / sampleRate;
 
 // the time at which a thread was activated.
 // threads get deactivated after threadStayOnFor milliseconds
-long threadTimeOn[NTHREADS];
+long threadTimeOn;
 // whether each thread is currently activated or not
-bool threadOn[NTHREADS];
+bool threadOn;
 
 void setup() {
   Serial.begin(9600);
-  for (int i = 0; i < NTHREADS; i++) {
-    pinMode(threadPin[i], OUTPUT);
-    threadTimeOn[i] = 0;
-    threadOn[i] = false;
-  }
+  pinMode(threadPin, OUTPUT);
+  threadTimeOn = 0;
+  threadOn = false;
 }
 
 void loop() {
@@ -87,7 +85,7 @@ void loop() {
     activateThread();
   }
   // sending data to Processing sketch which graphs it
-  Serial.print(sensorFilteredNew);Serial.println(",");
+  Serial.print(sensorFilteredNew);Serial.print(",");
   
   // keeps track of giving power to the threads that are
   // currently on, as well as turning threads off after
@@ -99,60 +97,19 @@ void loop() {
   delay(samplePeriod);
 }
 
-// which thread to activate this time. should only be used by activateThread()
-int whichThread = 0;
 void activateThread() {
   // you have to do these three things to turn a thread "on"
-  threadOn[whichThread] = true;
-  threadTimeOn[whichThread] = millis();
-  
-  // choosing which thread to activate next
-  // this cycles through all the available threads
-  whichThread += 1;
-  whichThread %= NTHREADS;
+  threadOn = true;
+  threadTimeOn = millis();
+  analogWrite(threadPin, threadPower);
+  Serial.println("Activated");  
 }
 
-// which thread last received power. should only be used by activateThreads()
-int threadLastPowered = 0;
 void updateThreads() {
-  // 1. makes all the activated threads take turns getting power from
-  //    the battery. each time updateThreads() is called, it chooses
-  //    a different activated thread to receive power.
-  // 2. turns off threads after stayOnFor ms since thread came on.
-  
-  // the last thread to get power already got some power, so its turn
-  // is over. stop giving it power.
-//  Serial.println();Serial.print(threadPin[threadLastPowered]);Serial.println(" off");
-//  analogWrite(threadPin[threadLastPowered], 0);
-  
-  // choose the next thread to give power to. start by looking at the
-  // the next thread right after threadLastPowered, and then keep
-  // checking each thread one by one until we find one that is on.
-  // once we find one that is on, we can give that thread power and
-  // stop looking/break out of the for loop
-  int startThread = (threadLastPowered + 1) % NTHREADS;
-  for (int j = 0; j < NTHREADS; j++) {
-    int i = (startThread + j) % NTHREADS;
-    if (threadOn[i]) {
-      //Serial.println();
-      Serial.print("\npowering thread at pin: ");Serial.println(threadPin[i]);
-      analogWrite(threadPin[i], threadPower[i]);
-      threadLastPowered = i;
-      break;
-    } else {
-      // also just make sure any "off" pins are not getting power.
-      // not sure if this is necessary here?
-      analogWrite(threadPin[i], 0);
-    }
-  }
-  
-  // go through all the threads and see which have been on for long
-  // enough that it is time to turn them off. also turn off the
-  // corresponding LED for that thread.
-  for (int i = 0; i < NTHREADS; i++) {
-    if (threadOn[i] && millis() - threadTimeOn[i] > threadStayOnFor) {
-      threadOn[i] = false;
-    }
+  if (threadOn && millis() - threadTimeOn > threadStayOnFor) {
+   threadOn = false;
+   analogWrite(threadPin, 0);
+   Serial.println("Deactivated");
   }
 }
 
