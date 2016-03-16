@@ -11,6 +11,8 @@
 // 100 / 20 = 5 seconds worth of data. This is the time scale over which we will compute
 // the average and standard deviation, which are used for spike detection.
 
+#define buttonPin 10
+
 // where threads are plugged in
 int threadPin = 5;
 // for each thread, have an LED to show when the thread is activated
@@ -75,6 +77,7 @@ void setup() {
   threadTimeOn = 0;
   threadOn = false;
   pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT);
 }
 
 void loop() {
@@ -84,7 +87,10 @@ void loop() {
   sensorFilteredNew = myFilter.step(sensorRaw);
   addToArray(sensorFilteredNew);
   
-  if (hasPeak()) {
+  // the button lets the user force the thread to turn on
+  int buttonVal = digitalRead(buttonPin);
+  
+  if (hasPeak() || buttonVal > 0) {
     // sending data to Processing sketch which graphs it
     Serial.print("MARK");Serial.print(",");
     if (!threadOn) {
