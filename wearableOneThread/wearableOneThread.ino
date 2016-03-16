@@ -2,8 +2,6 @@
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
 #define sensorPin A0
-// the pin the debug switch is plugged into
-#define debugPin 13
 // the number of previous filtered GSR readings to store
 #define N 100
 // sample rate of taking GSR readings in Hz
@@ -13,15 +11,15 @@
 // 100 / 20 = 5 seconds worth of data. This is the time scale over which we will compute
 // the average and standard deviation, which are used for spike detection.
 
-// the number of threads on the wearable
-#define NTHREADS 1
+#define buttonPin 10
+
 // where threads are plugged in
-int threadPin[NTHREADS] = {5};
+int threadPin = 5;
 // for each thread, have an LED to show when the thread is activated
 // (the LED only lights up when in debug mode)
-int ledPin[NTHREADS] = {13};
+int ledPin = 13;
 // how much power you think each thread needs. depends on their length etc
-int threadPower[NTHREADS] = {255};
+int threadPower = 255;
 // how long (ms) a thread should stay on for before turning off
 #define threadStayOnFor 180000
 ///////////////////////////////
@@ -65,121 +63,58 @@ int samplePeriod = 1000 / sampleRate;
 
 // the time at which a thread was activated.
 // threads get deactivated after threadStayOnFor milliseconds
-long threadTimeOn[NTHREADS];
+long threadTimeOn;
 // whether each thread is currently activated or not
-bool threadOn[NTHREADS];
+bool threadOn;
 
 // whether we are in debug mode or not. in debug mode,
 // LEDs come on corresponding with which threads are on
-bool debug = false;
+bool debug = true;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(debugPin, INPUT);
-  for (int i = 0; i < NTHREADS; i++) {
-    pinMode(threadPin[i], OUTPUT);
-    threadTimeOn[i] = 0;
-    threadOn[i] = false;
-//    pinMode(ledPin[i], OUTPUT);
-  }
+  pinMode(threadPin, OUTPUT);
+  threadTimeOn = 0;
+  threadOn = false;
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT);
 }
 
 void loop() {
-  //debug = (digitalRead(debugPin) == HIGH);
-  debug = true;
-  
   sensorRaw = analogRead(sensorPin);
   sensorRaw = min(sensorRaw, 1023);
   sensorRaw = max(sensorRaw, 0);
   sensorFilteredNew = myFilter.step(sensorRaw);
   addToArray(sensorFilteredNew);
   
-  if (hasPeak()) {
+  // the button lets the user force the thread to turn on
+  int buttonVal = digitalRead(buttonPin);
+  
+  if (hasPeak() || buttonVal > 0) {
     // sending data to Processing sketch which graphs it
     Serial.print("MARK");Serial.print(",");
-    // turn on a thread to show this peak
-    activateThread();
+    if (!threadOn) {
+      // turn on a thread to show this peak
+      //Serial.println("\nTURNING THREAD ON");
+      analogWrite(threadPin, 255);
+      digitalWrite(ledPin, HIGH);
+      threadTimeOn = millis();
+      threadOn = true;
+    }
+  } else {
+    if (threadOn && millis() - threadTimeOn > threadStayOnFor) {
+      //Serial.println("\nTURNING THREAD OFF");
+      analogWrite(threadPin, 0);
+      digitalWrite(ledPin, LOW);
+      threadOn = false;
+    }
   }
   // sending data to Processing sketch which graphs it
   Serial.print(sensorFilteredNew);Serial.print(",");
-  
-  // keeps track of giving power to the threads that are
-  // currently on, as well as turning threads off after
-  // stayOnFor milliseconds since the thread came on
-  updateThreads();
 
   // wait this much time so that we regularly sample
   // the GSR sensor
   delay(samplePeriod);
-}
-
-// which thread to activate this time. should only be used by activateThread()
-int whichThread = 0;
-void activateThread() {
-  // you have to do these three things to turn a thread "on"
-  threadOn[whichThread] = true;
-  threadTimeOn[whichThread] = millis();
-  if (debug) {
-    //Serial.println();Serial.println("turning on LED");
-    digitalWrite(ledPin[whichThread], HIGH);
-  }
-  
-  // choosing which thread to activate next
-  // this cycles through all the available threads
-  whichThread += 1;
-  whichThread %= NTHREADS;
-}
-
-// which thread last received power. should only be used by activateThreads()
-int threadLastPowered = 0;
-void updateThreads() {
-  // 1. makes all the activated threads take turns getting power from
-  //    the battery. each time updateThreads() is called, it chooses
-  //    a different activated thread to receive power.
-  // 2. turns off threads after stayOnFor ms since thread came on.
-  // 3. makes sure to turn off debug LEDs
-  
-  // the last thread to get power already got some power, so its turn
-  // is over. stop giving it power.
-  analogWrite(threadPin[threadLastPowered], 0);
-  
-  // choose the next thread to give power to. start by looking at the
-  // the next thread right after threadLastPowered, and then keep
-  // checking each thread one by one until we find one that is on.
-  // once we find one that is on, we can give that thread power and
-  // stop looking/break out of the for loop
-  int startThread = (threadLastPowered + 1) % NTHREADS;
-  for (int j = 0; j < NTHREADS; j++) {
-    int i = (startThread + j) % NTHREADS;
-    if (threadOn[i]) {
-      //Serial.println();
-      //Serial.print("powering thread at index: ");Serial.println(i);
-      analogWrite(threadPin[i], threadPower[i]);
-      threadLastPowered = i;
-      break;
-    } else {
-      // also just make sure any "off" pins are not getting power.
-      // not sure if this is necessary here?
-      analogWrite(threadPin[i], 0);
-    }
-  }
-  
-  // go through all the threads and see which have been on for long
-  // enough that it is time to turn them off. also turn off the
-  // corresponding LED for that thread.
-  for (int i = 0; i < NTHREADS; i++) {
-    if (threadOn[i] && millis() - threadTimeOn[i] > threadStayOnFor) {
-      threadOn[i] = false;
-      digitalWrite(ledPin[i], LOW);
-    }
-  }
-  
-  // if we are not in debug mode, then all LEDs should be off.
-//  if (!debug) {
-//    for (int i = 0; i < NTHREADS; i++) {
-//      digitalWrite(ledPin[i], LOW);
-//    }
-//  }
 }
 
 void addToArray(int x) {
@@ -212,7 +147,7 @@ bool hasPeak() {
   // pretty flat signal
   if (sensorFiltered[0] - avg > std
        &&
-       sensorFiltered[0] - avg > 25 ) {
+       sensorFiltered[0] - avg > 50 ) {
     return true;
   } else {
     return false;

@@ -1,3 +1,12 @@
+/* Comment by Noura on March 15, 2016:
+I think this is when I was still trying to program it to maybe 
+control multiple threads. This added the complication of switching
+the power supply to each thread that was currently "on". I am 
+not sure but I wonder if this created a bug. So, unless I am 
+definitely using more than one thread, I would just use the 
+wearabeOneThread sketch instead. It has one thread hard coded
+so the code is a bit simpler */
+
 
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
