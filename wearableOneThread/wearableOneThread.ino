@@ -147,7 +147,7 @@ bool hasPeak() {
   // pretty flat signal
   if (sensorFiltered[0] - avg > std
        &&
-       sensorFiltered[0] - avg > 25 ) {
+       sensorFiltered[0] - avg > 50 ) {
     return true;
   } else {
     return false;
