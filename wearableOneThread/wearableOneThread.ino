@@ -1,7 +1,7 @@
 
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
-#define sensorPin A0
+#define sensorPin A5
 // the number of previous filtered GSR readings to store
 #define N 100
 // sample rate of taking GSR readings in Hz
@@ -153,6 +153,7 @@ bool hasPeak() {
     return false;
   }
 }
+
 
 
 
