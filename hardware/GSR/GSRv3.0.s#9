@@ -3774,8 +3774,8 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <part name="LED2" library="microbuilder" deviceset="LED" device="0603_NOOUTLINE"/>
 <part name="LED3" library="microbuilder" deviceset="LED" device="0603_NOOUTLINE"/>
 <part name="LED4" library="microbuilder" deviceset="LED" device="0603_NOOUTLINE"/>
-<part name="C1" library="microbuilder" deviceset="CAP_TANTALUM" device="B/3528_WAVE" value="47uF"/>
-<part name="C3" library="microbuilder" deviceset="CAP_TANTALUM" device="B/3528_WAVE" value="47uF"/>
+<part name="C1" library="microbuilder" deviceset="CAP_TANTALUM" device="B/3528_WAVE"/>
+<part name="C3" library="microbuilder" deviceset="CAP_TANTALUM" device="B/3528_WAVE"/>
 <part name="POWER_SWITCH" library="myParts" deviceset="PUSH_BUTTON" device=""/>
 <part name="U2" library="microbuilder" deviceset="VREG_SOT23-5" device=""/>
 <part name="POWER" library="microbuilder" deviceset="JST_2PIN" device=""/>
@@ -3857,6 +3857,19 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <nets>
 <net name="GND" class="0">
 <segment>
+<pinref part="FET1" gate="G$1" pin="E"/>
+<pinref part="FET2" gate="G$1" pin="E"/>
+<wire x1="5.08" y1="10.16" x2="17.78" y2="10.16" width="0.1524" layer="91"/>
+<pinref part="FET3" gate="G$1" pin="E"/>
+<wire x1="17.78" y1="10.16" x2="30.48" y2="10.16" width="0.1524" layer="91"/>
+<junction x="17.78" y="10.16"/>
+<wire x1="5.08" y1="10.16" x2="-5.08" y2="10.16" width="0.1524" layer="91"/>
+<junction x="5.08" y="10.16"/>
+<label x="-5.08" y="10.16" size="1.778" layer="95"/>
+<pinref part="FET4" gate="G$1" pin="E"/>
+<wire x1="43.18" y1="10.16" x2="30.48" y2="10.16" width="0.1524" layer="91"/>
+</segment>
+<segment>
 <pinref part="U1" gate="G$1" pin="GND@3"/>
 <wire x1="71.12" y1="111.76" x2="83.82" y2="111.76" width="0.1524" layer="91"/>
 <label x="78.74" y="111.76" size="1.778" layer="95"/>
@@ -3910,21 +3923,6 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <label x="93.98" y="147.32" size="1.778" layer="95"/>
 <pinref part="GSR" gate="G$1" pin="2"/>
 </segment>
-<segment>
-<pinref part="FET4" gate="G$1" pin="E"/>
-<wire x1="43.18" y1="10.16" x2="43.18" y2="7.62" width="0.1524" layer="91"/>
-<pinref part="FET3" gate="G$1" pin="E"/>
-<wire x1="43.18" y1="7.62" x2="30.48" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="30.48" y1="7.62" x2="30.48" y2="10.16" width="0.1524" layer="91"/>
-<pinref part="FET2" gate="G$1" pin="E"/>
-<wire x1="30.48" y1="7.62" x2="17.78" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="17.78" y1="7.62" x2="17.78" y2="10.16" width="0.1524" layer="91"/>
-<pinref part="FET1" gate="G$1" pin="E"/>
-<wire x1="17.78" y1="7.62" x2="5.08" y2="7.62" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="7.62" x2="5.08" y2="10.16" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="7.62" x2="-5.08" y2="7.62" width="0.1524" layer="91"/>
-<label x="-5.08" y="7.62" size="1.778" layer="95"/>
-</segment>
 </net>
 <net name="FET1" class="0">
 <segment>
@@ -3934,9 +3932,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <label x="-5.08" y="17.78" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="D5"/>
-<wire x1="35.56" y1="96.52" x2="20.32" y2="96.52" width="0.1524" layer="91"/>
-<label x="20.32" y="96.52" size="1.778" layer="95"/>
+<pinref part="U1" gate="G$1" pin="D9"/>
+<wire x1="35.56" y1="86.36" x2="20.32" y2="86.36" width="0.1524" layer="91"/>
+<label x="20.32" y="86.36" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="FET2" class="0">
@@ -3947,9 +3945,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <label x="-5.08" y="22.86" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="U1" gate="G$1" pin="D4"/>
-<wire x1="35.56" y1="99.06" x2="20.32" y2="99.06" width="0.1524" layer="91"/>
-<label x="20.32" y="99.06" size="1.778" layer="95"/>
+<pinref part="U1" gate="G$1" pin="D8"/>
+<wire x1="35.56" y1="88.9" x2="20.32" y2="88.9" width="0.1524" layer="91"/>
+<label x="20.32" y="88.9" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="FET3" class="0">

@@ -71,6 +71,9 @@ bool threadOn;
 // LEDs come on corresponding with which threads are on
 bool debug = true;
 
+// the timestamp when the sketch started
+long startTime;
+
 void setup() {
   Serial.begin(9600);
   pinMode(threadPin, OUTPUT);
@@ -78,6 +81,8 @@ void setup() {
   threadOn = false;
   pinMode(ledPin, OUTPUT);
   pinMode(buttonPin, INPUT);
+  digitalWrite(threadPin, 0);
+  startTime = millis();
 }
 
 void loop() {
@@ -127,6 +132,11 @@ void addToArray(int x) {
 }
 
 bool hasPeak() {
+  // ignore initial peak due to initialization
+  if ( millis() - startTime < 1000 ) {
+    return false;
+  }
+  
   // calculate the average
   float avg = 0;
   for (int i = 0; i < N; i++) {
