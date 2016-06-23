@@ -1,7 +1,7 @@
 
 // SETTINGS ///////////////////
 // the pin the GSR sensor is plugged into
-#define sensorPin A5
+#define sensorPin A7
 // the number of previous filtered GSR readings to store
 #define N 100
 // sample rate of taking GSR readings in Hz
@@ -14,14 +14,14 @@
 #define buttonPin 10
 
 // where threads are plugged in
-int threadPin = 5;
+int threadPin = 4;
 // for each thread, have an LED to show when the thread is activated
 // (the LED only lights up when in debug mode)
 int ledPin = 13;
 // how much power you think each thread needs. depends on their length etc
 int threadPower = 255;
 // how long (ms) a thread should stay on for before turning off
-#define threadStayOnFor 180000
+#define threadStayOnFor 1000 //180000
 ///////////////////////////////
 
 // NOTE
@@ -115,7 +115,8 @@ void loop() {
     }
   }
   // sending data to Processing sketch which graphs it
-  Serial.print(sensorFilteredNew);Serial.print(",");
+  //Serial.print(sensorFilteredNew);Serial.print(",");
+  Serial.print(sensorRaw);Serial.print(",");
 
   // wait this much time so that we regularly sample
   // the GSR sensor
