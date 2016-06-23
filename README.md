@@ -1,5 +1,5 @@
 #EBB Sense
-  Controlling a wearable dsiplay using a bitalino EDA sensor
+  Controlling a wearable display using a bitalino EDA sensor
 
 ###Wearable
 - Arduino Code
