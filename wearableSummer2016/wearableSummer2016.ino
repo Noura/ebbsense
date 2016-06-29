@@ -21,7 +21,7 @@
 // how many threads we are using
 #define N_THREADS 3
 // how long to display each moment for
-#define MOMENT_DT (3 * 60 * 1000)
+#define MOMENT_DT 61000
 
 // the pin the EDA sensor is connected to
 #define edaSensorPin A7
@@ -42,7 +42,7 @@ int threadPins[] = {5, 4, 3};
 // how much power each thread needs. depends on their length etc
 int threadPowerLevels[] = {255, 255, 255};
 // how long (ms) each thread should get power for to change color
-unsigned long threadPowerDurations[] = { (1 * 60 * 1000), (1 * 60 * 1000), (1 * 60 * 1000)};
+unsigned long threadPowerDurations[] = { 60000, 60000, 60000 };
 ///////////////////////////////
 
 // EDA sensor & spike detection
@@ -68,12 +68,16 @@ bool momentWasLogged;
 void setup() {
   Serial.begin(9600);
   
+  // make sure ALL thread pins are off, even the ones we aren't using
+  for (int i = 0; i < 4; i++) {
+    analogWrite(allThreadPins[i], 0);
+  }
+  
   for (int i = 0; i < N_THREADS; i++) {
     // initialize all momentTimes to 0
     momentTimes[i] = 0;
-    // make sure all threads are off
+    // initialize it so all threads should be off
     threadsOn[i] = false;
-    analogWrite(threadPins[i], 0);
   }
   
   myThreads.init(N_THREADS, threadPins, threadPowerLevels, threadPowerDurations);
@@ -83,6 +87,7 @@ void loop() {
   Serial.println();
   
   t = millis();
+  Serial.print("t: ");Serial.println(t);
   
   edaVal = analogRead(edaSensorPin);
   myEDASensor.update(edaVal);
@@ -118,6 +123,8 @@ void loop() {
   PrintArray::printArrayUnsignedLong(momentTimes, N_THREADS);
   Serial.print("threadsOn: ");
   PrintArray::printArrayBool(threadsOn, N_THREADS);
+  
+  delay(500);
 }
 
 bool logMoment(unsigned long t) {
