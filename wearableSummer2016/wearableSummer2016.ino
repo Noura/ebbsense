@@ -16,12 +16,13 @@
 
 /////////////////////////////////////////////////////////////////
 // SETTINGS /////////////////////////////////////////////////////
+// FOR LIGHT BROWN SHIRT ////////////////////////////////////////
 /////////////////////////////////////////////////////////////////
 
 // how many threads we are using
 #define N_THREADS 3
 // how long to display each moment for
-#define MOMENT_DT 61000
+#define MOMENT_DT 40000
 
 // the pin the EDA sensor is connected to
 #define edaSensorPin A7
@@ -36,13 +37,14 @@
 #define fsrThreshold 800
 
 // all pins that the PCB has for thread outputs - some may be broken on this PCB
-int allThreadPins[] = {5, 4, 3, 2};
+int allThreadPins[] = {5, 6, 3, 2};
+
 // where threads are actually plugged in - these pins are working
-int threadPins[] = {5, 4, 3};
+int threadPins[] = {5, 6, 3};
 // how much power each thread needs. depends on their length etc
-int threadPowerLevels[] = {255, 255, 255};
+int threadPowerLevels[] = {30, 30, 30};
 // how long (ms) each thread should get power for to change color
-unsigned long threadPowerDurations[] = { 60000, 60000, 60000 };
+unsigned long threadPowerDurations[] = { 10000, 10000, 10000 };
 ///////////////////////////////
 
 // EDA sensor & spike detection
@@ -89,34 +91,43 @@ void loop() {
   t = millis();
   Serial.print("t: ");Serial.println(t);
   
+  Serial.print("fsrON: ");Serial.println(analogRead(fsrMomentOnPin));
+  Serial.print("fsrOFF: ");Serial.println(analogRead(fsrMomentOffPin));
+  
+  // if the EDA sensor has a peak, log that as a moment
   edaVal = analogRead(edaSensorPin);
   myEDASensor.update(edaVal);
-  
   if ( myEDASensor.hasPeak() ) {
     Serial.println("EDA SENSOR PEAK");
     momentWasLogged = logMoment(t);
     Serial.print("momentWasLogged: ");Serial.println(momentWasLogged);
   }
   
+  // if the fsrMomentOn is pressed, logged that as a moment
   if (analogRead(fsrMomentOnPin) > fsrThreshold) {
     Serial.println("FSR MOMENT ON PRESS");
     momentWasLogged = logMoment(t);
     Serial.print("momentWasLogged: ");Serial.println(momentWasLogged);
   }
   
+  // deciding which threads should be on
   for (int i = 0; i < N_THREADS; i++) {
+    // refresh all threads to be off for this loop
     threadsOn[i] = false;
   }
-  
   for (int i = 0; i < N_THREADS; i++) {
+    // check each moment time.
+    // if there wasn't a moment, do nothing
     if (momentTimes[i] == 0) continue;
+    // how long ago the moment happened determines which thread should be on to
+    // display that moment
     dt = abs(t - momentTimes[i]);
     thread_index = dt / MOMENT_DT;
     if (thread_index < N_THREADS) {
       threadsOn[thread_index] = true;
     }
   }
-  
+  // threads controller will make sure the threads we specify are on
   myThreads.update(threadsOn);
   
   Serial.print("momentTimes: ");
