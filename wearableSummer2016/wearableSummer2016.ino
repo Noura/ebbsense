@@ -43,9 +43,12 @@ int allThreadPins[] = {5, 6, 3, 2};
 // where threads are actually plugged in - these pins are working
 int threadPins[] = {5, 6, 3};
 // how much power each thread needs. depends on their length etc
-int threadPowerLevels[] = {30, 30, 30};
+// int threadPowerLevels[] = {30, 30, 30};
 // how long (ms) each thread should get power for to change color
-unsigned long threadPowerDurations[] = { 10000, 10000, 10000 };
+// unsigned long threadPowerDurations[] = { 10000, 10000, 10000 };
+
+int threadPowerLevels[] = {30, 30, 30};
+unsigned long threadPowerDurations[] = { 20000, 20000, 20000 };
 ///////////////////////////////
 
 // EDA sensor & spike detection
@@ -104,11 +107,19 @@ void loop() {
     Serial.print("momentWasLogged: ");Serial.println(momentWasLogged);
   }
   
-  // if the fsrMomentOn is pressed, logged that as a moment
+  // if the fsrMomentOn is pressed, log that as a moment
   if (analogRead(fsrMomentOnPin) > fsrThreshold) {
     Serial.println("FSR MOMENT ON PRESS");
     momentWasLogged = logMoment(t);
     Serial.print("momentWasLogged: ");Serial.println(momentWasLogged);
+  }
+  
+  // if the fsrMomentOff is pressed, remove all moments
+  if (analogRead(fsrMomentOffPin) > fsrThreshold) {
+    Serial.println("FSR MOMENT OFF PRESS");
+    for (int i = 0; i < N_THREADS; i++) {
+      momentTimes[i] = 0;
+    }
   }
   
   // deciding which threads should be on
