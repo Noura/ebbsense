@@ -37,6 +37,7 @@
 #define fsrThreshold 800
 
 // all pins that the PCB has for thread outputs - some may be broken on this PCB
+// TODO I think pin 2 is not even a PWM out
 int allThreadPins[] = {5, 6, 3, 2};
 
 // where threads are actually plugged in - these pins are working
