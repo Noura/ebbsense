@@ -22,7 +22,8 @@
 // how many threads we are using
 #define N_THREADS 3
 // how long to display each moment for
-#define MOMENT_DT 40000
+// MOMENT_DT - threadPowerDurations[i] is how long thread_i has to cool off
+#define MOMENT_DT 150000
 
 // the pin the EDA sensor is connected to
 #define edaSensorPin A7
