@@ -43,13 +43,26 @@ int allThreadPins[] = {5, 6, 3, 2};
 
 // where threads are actually plugged in - these pins are working
 int threadPins[] = {5, 6, 3};
+
+// change pretty quickly, maybe don't leave on too long at this power level?
+// third thread doesn't change as much in some environments.
 // how much power each thread needs. depends on their length etc
 // int threadPowerLevels[] = {30, 30, 30};
 // how long (ms) each thread should get power for to change color
 // unsigned long threadPowerDurations[] = { 10000, 10000, 10000 };
 
-int threadPowerLevels[] = {30, 30, 30};
-unsigned long threadPowerDurations[] = { 20000, 20000, 20000 };
+// change pretty quickly, maybe don't leave on too long at this power level?
+// third thread needs a bit more power so here it's good
+// int threadPowerLevels[] = {30, 30, 40};
+// unsigned long threadPowerDurations[] = { 20000, 20000, 20000 };
+
+// change very slowly, seems OK to leave it on for a pretty long while
+// although it does get warm
+//int threadPowerLevels[] = {15, 18, 20};
+//unsigned long threadPowerDurations[] = { 120000, 120000, 120000 };
+
+int threadPowerLevels[] = {35, 35, 35};
+unsigned long threadPowerDurations[] = { 120000, 120000, 120000 };
 ///////////////////////////////
 
 // EDA sensor & spike detection
