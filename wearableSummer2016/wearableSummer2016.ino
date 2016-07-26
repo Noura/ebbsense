@@ -114,6 +114,7 @@ void loop() {
   
   // if the EDA sensor has a peak, log that as a moment
   edaVal = analogRead(edaSensorPin);
+  Serial.print("edaVal: ");Serial.println(edaVal);
   myEDASensor.update(edaVal);
   if ( myEDASensor.hasPeak() ) {
     Serial.println("EDA SENSOR PEAK");
