@@ -9,6 +9,7 @@
 - Scale using up and down keys
 
 ###Hardware
+![Custom PCB](http://github.com/Noura/ebbsense/tree/images/beautifulPCB_simplified-01.jpg)
 - Eagle schematic and board
 - Current version is 2.1
 
